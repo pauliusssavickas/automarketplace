@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\VehicleTypeController;
+use App\Http\Controllers\ListingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -14,6 +16,11 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('{any}', function () {
+    return view('app');
+})->where('any', '.*')->middleware('web');
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
