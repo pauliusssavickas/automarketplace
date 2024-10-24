@@ -19,17 +19,23 @@ class VehicleTypeController extends Controller
         // Validate the incoming data
         $validated = $request->validate([
             'name' => 'required|string',
-            'fields' => 'required|array', // Expect an array of fields
+            'fields' => 'required|array',  // Expect an array of fields
         ]);
 
-        // Create a new vehicle type, passing the array directly
-        $vehicleType = VehicleType::create([
-            'name' => $validated['name'],
-            'fields' => $validated['fields'],  // No need for json_encode
-        ]);
+        try {
+            // Create a new vehicle type
+            $vehicleType = VehicleType::create([
+                'name' => $validated['name'],
+                'fields' => $validated['fields'],  // No need for json_encode
+            ]);
 
-        return response()->json($vehicleType, 201);
+            return response()->json($vehicleType, 201);  // Created
+        } catch (\Exception $e) {
+            // Return a JSON response for any unexpected errors
+            return response()->json(['error' => 'Failed to create vehicle type'], 500);
+        }
     }
+
 
 
     // Get a single vehicle type
@@ -51,21 +57,26 @@ class VehicleTypeController extends Controller
             'fields' => 'sometimes|required|array',  // Expect an array of fields
         ]);
 
-        // Update name if provided
-        if ($request->has('name')) {
-            $vehicleType->name = $validated['name'];
+        try {
+            // Update name if provided
+            if ($request->has('name')) {
+                $vehicleType->name = $validated['name'];
+            }
+
+            // Update fields if provided
+            if ($request->has('fields')) {
+                $vehicleType->fields = $validated['fields'];  // Pass the array directly
+            }
+
+            // Save the updated vehicle type
+            $vehicleType->save();
+
+            return response()->json($vehicleType, 200);  // OK status
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update vehicle type'], 500);
         }
-
-        // Update fields if provided
-        if ($request->has('fields')) {
-            $vehicleType->fields = $validated['fields'];  // Pass the array directly
-        }
-
-        // Save the updated vehicle type
-        $vehicleType->save();
-
-        return response()->json($vehicleType);
     }
+
 
 
 
@@ -73,9 +84,14 @@ class VehicleTypeController extends Controller
     public function destroy($id)
     {
         $vehicleType = VehicleType::findOrFail($id);
-        $vehicleType->delete();
 
-        return response()->json(null, 204);
+        try {
+            $vehicleType->delete();
+            return response()->json(null, 204);  // No Content, deletion successful
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to delete vehicle type'], 500);
+        }
     }
+
 }
 
