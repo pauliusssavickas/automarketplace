@@ -1,4 +1,14 @@
 <?php
+/**
+ * @OA\Info(
+ *     title="AutoMarket API",
+ *     version="1.0.0",
+ *     description="API documentation for AutoMarket application.",
+ *     @OA\Contact(
+ *         email="support@automarket.com"
+ *     ),
+ * )
+ */
 
 namespace App\Http\Controllers;
 
@@ -8,12 +18,45 @@ use Illuminate\Http\Request;
 class VehicleTypeController extends Controller
 {
     // Get all vehicle types
+    /**
+ * @OA\Get(
+ *     path="/api/vehicle-types",
+ *     summary="List all vehicle types",
+ *     tags={"Vehicle Types"},
+ *     @OA\Response(response=200, description="A list of vehicle types")
+ * )
+ */
     public function index()
     {
         return VehicleType::all();
     }
 
     // Create a new vehicle type with dynamic fields
+    /**
+ * @OA\Post(
+ *     path="/api/vehicle-types",
+ *     summary="Create a new vehicle type",
+ *     tags={"Vehicle Types"},
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Car"),
+ *             @OA\Property(
+ *                 property="fields",
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(property="name", type="string", example="make"),
+ *                     @OA\Property(property="required", type="boolean", example=true)
+ *                 )
+ *             ),
+ *         )
+ *     ),
+ *     @OA\Response(response=201, description="Vehicle type created"),
+ *     @OA\Response(response=422, description="Bad Request")
+ * )
+ */
     public function store(Request $request)
     {
         // Validate the incoming data
@@ -39,6 +82,22 @@ class VehicleTypeController extends Controller
 
 
     // Get a single vehicle type
+    /**
+ * @OA\Get(
+ *     path="/api/vehicle-types/{id}",
+ *     summary="Get a vehicle type by ID",
+ *     tags={"Vehicle Types"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Vehicle type ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="Vehicle type details"),
+ *     @OA\Response(response=404, description="Vehicle type not found")
+ * )
+ */
     public function show($id)
     {
         $vehicleType = VehicleType::findOrFail($id);
@@ -46,6 +105,39 @@ class VehicleTypeController extends Controller
     }
 
     // Update an existing vehicle type
+    /**
+ * @OA\Put(
+ *     path="/api/vehicle-types/{id}",
+ *     summary="Update a vehicle type",
+ *     tags={"Vehicle Types"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Vehicle type ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="name", type="string", example="Car"),
+ *             @OA\Property(
+ *                 property="fields",
+ *                 type="array",
+ *                 @OA\Items(
+ *                     type="object",
+ *                     @OA\Property(property="name", type="string", example="make"),
+ *                     @OA\Property(property="required", type="boolean", example=true)
+ *                 )
+ *             ),
+ *         )
+ *     ),
+ *     @OA\Response(response=200, description="Vehicle type updated"),
+ *     @OA\Response(response=422, description="Bad request"),
+ *     @OA\Response(response=404, description="Vehicle type not found")
+ * )
+ */
     public function update(Request $request, $id)
     {
         // Find the vehicle type by ID or fail
@@ -81,6 +173,22 @@ class VehicleTypeController extends Controller
 
 
     // Delete a vehicle type
+    /**
+ * @OA\Delete(
+ *     path="/api/vehicle-types/{id}",
+ *     summary="Delete a vehicle type",
+ *     tags={"Vehicle Types"},
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         required=true,
+ *         description="Vehicle type ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=204, description="Vehicle type deleted"),
+ *     @OA\Response(response=404, description="Vehicle type not found")
+ * )
+ */
     public function destroy($id)
     {
         $vehicleType = VehicleType::findOrFail($id);

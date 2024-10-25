@@ -9,6 +9,21 @@ use Illuminate\Http\Request;
 class ListingController extends Controller
 {
     // Get all listings for a specific vehicle type
+    /**
+ * @OA\Get(
+ *     path="/api/vehicle-types/{vehicleTypeId}/listings",
+ *     summary="List all listings for a vehicle type",
+ *     tags={"Listings"},
+ *     @OA\Parameter(
+ *         name="vehicleTypeId",
+ *         in="path",
+ *         required=true,
+ *         description="Vehicle type ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(response=200, description="A list of listings")
+ * )
+ */
     public function index($vehicle_type_id)
     {
         $vehicleType = VehicleType::findOrFail($vehicle_type_id);
@@ -20,6 +35,30 @@ class ListingController extends Controller
     }
 
     // Create a new listing for a specific vehicle type
+    /**
+ * @OA\Post(
+ *     path="/api/vehicle-types/{vehicleTypeId}/listings",
+ *     summary="Create a listing under a vehicle type",
+ *     tags={"Listings"},
+ *     @OA\Parameter(
+ *         name="vehicleTypeId",
+ *         in="path",
+ *         required=true,
+ *         description="Vehicle type ID",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="data", type="object", description="Listing details")
+ *         )
+ *     ),
+ *     @OA\Response(response=201, description="Listing created"),
+ *     @OA\Response(response=422, description="Bad request"),
+ *     @OA\Response(response=404, description="Vehicle type not found")
+ * )
+ */
     public function store(Request $request, $vehicle_type_id)
     {
         $vehicleType = VehicleType::findOrFail($vehicle_type_id);
@@ -40,6 +79,36 @@ class ListingController extends Controller
     }
 
     // Get a single listing for a specific vehicle type
+    /**
+ * @OA\Get(
+ *     path="/vehicle-types/{vehicleType}/listings/{listing}",
+ *     summary="Get a single listing by ID",
+ *     tags={"Listings"},
+ *     @OA\Parameter(
+ *         name="vehicleType",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the vehicle type",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="listing",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the listing",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Listing details"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Listing not found"
+ *     )
+ * )
+ */
+
     public function show($vehicle_type_id, $listing_id)
     {
         $vehicleType = VehicleType::findOrFail($vehicle_type_id);
@@ -51,6 +120,43 @@ class ListingController extends Controller
     }
 
     // Update a listing for a specific vehicle type
+/**
+ * @OA\Put(
+ *     path="/vehicle-types/{vehicleType}/listings/{listing}",
+ *     summary="Update an existing listing",
+ *     tags={"Listings"},
+ *     @OA\Parameter(
+ *         name="vehicleType",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the vehicle type",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="listing",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the listing",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             type="object",
+ *             @OA\Property(property="data", type="object", description="Listing details")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=200,
+ *         description="Listing updated successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Listing not found"
+ *     )
+ * )
+ */
+
     public function update(Request $request, $vehicle_type_id, $listing_id)
     {
         $vehicleType = VehicleType::findOrFail($vehicle_type_id);
@@ -70,6 +176,36 @@ class ListingController extends Controller
     }
 
     // Delete a listing for a specific vehicle type
+    /**
+ * @OA\Delete(
+ *     path="/vehicle-types/{vehicleType}/listings/{listing}",
+ *     summary="Delete a listing",
+ *     tags={"Listings"},
+ *     @OA\Parameter(
+ *         name="vehicleType",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the vehicle type",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="listing",
+ *         in="path",
+ *         required=true,
+ *         description="The ID of the listing",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Response(
+ *         response=204,
+ *         description="Listing deleted successfully"
+ *     ),
+ *     @OA\Response(
+ *         response=404,
+ *         description="Listing not found"
+ *     )
+ * )
+ */
+
     public function destroy($vehicle_type_id, $listing_id)
     {
         $vehicleType = VehicleType::findOrFail($vehicle_type_id);
