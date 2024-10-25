@@ -8,81 +8,77 @@ use Illuminate\Http\Request;
 
 class ListingController extends Controller
 {
-    // Get all listings
-    public function index()
+    // Get all listings for a specific vehicle type
+    public function index($vehicle_type_id)
     {
-        return Listing::all();
+        $vehicleType = VehicleType::findOrFail($vehicle_type_id);
+
+        // Get all listings for the specific vehicle type
+        $listings = $vehicleType->listings()->get();
+
+        return response()->json($listings, 200);
     }
 
-    // Create a new listing
-    public function store(Request $request)
+    // Create a new listing for a specific vehicle type
+    public function store(Request $request, $vehicle_type_id)
     {
-        // Validate the input
+        $vehicleType = VehicleType::findOrFail($vehicle_type_id);
+
+        // Validate the request
         $validated = $request->validate([
-            'vehicle_type_id' => 'required|exists:vehicle_types,id',
-            'data' => 'required|array',
+            'data' => 'required|array',  // Validate the listing data
             'user_id' => 'required|exists:users,id',
         ]);
 
-        // Get the vehicle type
-        $vehicleType = VehicleType::findOrFail($validated['vehicle_type_id']);
-
-        // Define validation rules for fields inside 'data'
-        $expectedFields = $vehicleType->fields;
-        $rules = [];
-        foreach ($expectedFields as $field) {
-            $rules['data.' . $field['name']] = $field['required'] ? 'required' : 'nullable';
-        }
-
-        // Validate the 'data' fields
-        $validatedData = $request->validate($rules);
-
-        // Create the listing and pass the array directly
-        $listing = Listing::create([
-            'vehicle_type_id' => $vehicleType->id,
-            'data' => $validatedData['data'],  // Pass the array directly without json_encode
+        // Create the new listing
+        $listing = $vehicleType->listings()->create([
+            'data' => $validated['data'],
             'user_id' => $validated['user_id'],
         ]);
 
         return response()->json($listing, 201);
     }
 
-
-    // Show a specific listing
-    public function show($id)
+    // Get a single listing for a specific vehicle type
+    public function show($vehicle_type_id, $listing_id)
     {
-        $listing = Listing::findOrFail($id);
-        return response()->json($listing);
+        $vehicleType = VehicleType::findOrFail($vehicle_type_id);
+
+        // Find the listing for this vehicle type
+        $listing = $vehicleType->listings()->findOrFail($listing_id);
+
+        return response()->json($listing, 200);
     }
 
-    // Update a listing
-    public function update(Request $request, $id)
-{
-    // Find the listing by ID
-    $listing = Listing::findOrFail($id);
-
-    // Validate the incoming data
-    $validated = $request->validate([
-        'vehicle_type_id' => 'required|exists:vehicle_types,id',
-        'data' => 'required|array',
-        'user_id' => 'required|exists:users,id',
-    ]);
-
-    // If validation passes, update the listing
-    $listing->update($validated);
-
-    return response()->json($listing);
-}
-
-
-
-    // Delete a listing
-    public function destroy($id)
+    // Update a listing for a specific vehicle type
+    public function update(Request $request, $vehicle_type_id, $listing_id)
     {
-        $listing = Listing::findOrFail($id);
+        $vehicleType = VehicleType::findOrFail($vehicle_type_id);
+        $listing = $vehicleType->listings()->findOrFail($listing_id);
+
+        // Validate the request
+        $validated = $request->validate([
+            'data' => 'required|array',
+        ]);
+
+        // Update the listing data
+        $listing->update([
+            'data' => $validated['data'],
+        ]);
+
+        return response()->json($listing, 200);
+    }
+
+    // Delete a listing for a specific vehicle type
+    public function destroy($vehicle_type_id, $listing_id)
+    {
+        $vehicleType = VehicleType::findOrFail($vehicle_type_id);
+        $listing = $vehicleType->listings()->findOrFail($listing_id);
+
         $listing->delete();
 
         return response()->json(null, 204);
     }
+
 }
 

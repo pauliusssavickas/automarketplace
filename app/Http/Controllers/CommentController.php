@@ -9,47 +9,58 @@ use Illuminate\Http\Request;
 class CommentController extends Controller
 {
     // Get all comments for a specific listing
-    public function index($listingId)
+    public function index($vehicle_type_id, $listing_id)
     {
-        $comments = Comment::where('listing_id', $listingId)->get();
-        return response()->json($comments);
+        $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
+                    ->findOrFail($listing_id);
+
+        // Get all comments for the specific listing
+        $comments = $listing->comments()->get();
+
+        return response()->json($comments, 200);
     }
 
-    // Create a new comment for a listing
-    public function store(Request $request, $listingId)
+    // Create a new comment for a specific listing
+    public function store(Request $request, $vehicle_type_id, $listing_id)
     {
-        // Validate the input
+        $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
+                    ->findOrFail($listing_id);
+
+        // Validate the request
         $validated = $request->validate([
             'content' => 'required|string',
             'user_id' => 'required|exists:users,id',
         ]);
 
-        // Make sure the listing exists
-        $listing = Listing::findOrFail($listingId);
-
-        // Create the comment
-        $comment = Comment::create([
+        // Create the new comment
+        $comment = $listing->comments()->create([
             'content' => $validated['content'],
             'user_id' => $validated['user_id'],
-            'listing_id' => $listing->id,
         ]);
 
         return response()->json($comment, 201);
     }
 
     // Show a specific comment
-    public function show($id)
+    public function show($vehicle_type_id, $listing_id, $comment_id)
     {
-        $comment = Comment::findOrFail($id);
-        return response()->json($comment);
+        $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
+                    ->findOrFail($listing_id);
+
+        $comment = $listing->comments()->findOrFail($comment_id);
+
+        return response()->json($comment, 200);
     }
 
-    // Update a specific comment
-    public function update(Request $request, $id)
+    // Update a comment
+    public function update(Request $request, $vehicle_type_id, $listing_id, $comment_id)
     {
-        $comment = Comment::findOrFail($id);
+        $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
+                    ->findOrFail($listing_id);
 
-        // Validate the input
+        $comment = $listing->comments()->findOrFail($comment_id);
+
+        // Validate the request
         $validated = $request->validate([
             'content' => 'required|string',
         ]);
@@ -59,15 +70,20 @@ class CommentController extends Controller
             'content' => $validated['content'],
         ]);
 
-        return response()->json($comment);
+        return response()->json($comment, 200);
     }
 
-    // Delete a specific comment
-    public function destroy($id)
+    // Delete a comment
+    public function destroy($vehicle_type_id, $listing_id, $comment_id)
     {
-        $comment = Comment::findOrFail($id);
+        $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
+                    ->findOrFail($listing_id);
+
+        $comment = $listing->comments()->findOrFail($comment_id);
+
         $comment->delete();
 
         return response()->json(null, 204);
     }
 }
+

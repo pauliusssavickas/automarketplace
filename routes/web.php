@@ -17,6 +17,12 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/listings', function () {
+    return view('listings');
+});
+
+
+
 Route::get('{any}', function () {
     return view('app');
 })->where('any', '.*')->middleware('web');

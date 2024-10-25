@@ -23,6 +23,11 @@ class Listing extends Model
         return $this->belongsTo(VehicleType::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
     // Define the relationship: a Listing belongs to a User (if user management is implemented)
     public function user()
     {

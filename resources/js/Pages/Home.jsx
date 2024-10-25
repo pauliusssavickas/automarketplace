@@ -1,5 +1,6 @@
 import React from 'react';
-import '../css/Home.css';
+import { Link } from 'react-router-dom';
+import '../../css/Home.css';
 
 function Home() {
     return (
@@ -9,7 +10,6 @@ function Home() {
                 <div className="container">
                     <h1 className="logo">AutoMarket</h1>
                     <nav className="nav">
-                        <a href="#listings">Listings</a>
                         <a href="#about">About</a>
                         <a href="#contact">Contact</a>
                     </nav>
@@ -21,7 +21,7 @@ function Home() {
                 <div className="container">
                     <h2>Welcome to AutoMarket</h2>
                     <p>Your trusted marketplace for buying and selling cars.</p>
-                    <a href="#listings" className="btn">Browse Listings</a>
+                    <Link to="/listings" className="btn">Browse Listings</Link> {/* Updated Link */}
                 </div>
             </section>
 
