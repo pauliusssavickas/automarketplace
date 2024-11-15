@@ -193,6 +193,11 @@ class VehicleTypeController extends Controller
     {
         $vehicleType = VehicleType::findOrFail($id);
 
+        // Check if there are any listings associated with this vehicle type
+        if ($vehicleType->listings()->exists()) {
+            return response()->json(['error' => 'Cannot delete vehicle type. There are listings associated with it.'], 400);
+        }
+
         try {
             $vehicleType->delete();
             return response()->json(null, 204);  // No Content, deletion successful
@@ -200,6 +205,7 @@ class VehicleTypeController extends Controller
             return response()->json(['error' => 'Failed to delete vehicle type'], 500);
         }
     }
+
 
 }
 

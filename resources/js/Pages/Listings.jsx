@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link } from '@inertiajs/react'; // Use Inertia's Link
 import '../../css/Listings.css';
 
 function Listings() {
@@ -10,7 +10,7 @@ function Listings() {
 
     // Fetch vehicle types on page load
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/vehicle-types')
+        axios.get('/api/vehicle-types')
             .then(response => {
                 setVehicleTypes(response.data);
             })
@@ -22,7 +22,7 @@ function Listings() {
     // Fetch listings when a vehicle type is selected
     useEffect(() => {
         if (selectedVehicleType) {
-            axios.get(`http://127.0.0.1:8000/api/vehicle-types/${selectedVehicleType}/listings`)
+            axios.get(`/api/vehicle-types/${selectedVehicleType}/listings`)
                 .then(response => {
                     setListings(response.data);
                 })
@@ -50,7 +50,11 @@ function Listings() {
             <section className="listings-grid">
                 {listings.length > 0 ? (
                     listings.map(listing => (
-                        <Link key={listing.id} to={`/listings/${listing.id}`} className="listing-card">
+                        <Link
+                            key={listing.id}
+                            href={`/listings/${selectedVehicleType}/${listing.id}`} // Use correct route structure
+                            className="listing-card"
+                        >
                             <h3>{listing.data.make} {listing.data.model}</h3>
                             <p>Year: {listing.data.year}</p>
                             <p>Engine: {listing.data.engine_size}</p>

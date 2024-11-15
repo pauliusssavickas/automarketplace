@@ -16,6 +16,9 @@ Route::middleware('api')->group(function () {
     Route::get('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'show']);
     Route::put('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'update']);
     Route::delete('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'destroy']);
+    //Route::get('/vehicle-types/{vehicleTypeId}/listings/{listingId}', [ListingController::class, 'show']);
+    
+
 
     // Nested routes for Comments under a specific Listing
     Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'index']);

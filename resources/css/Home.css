@@ -6,62 +6,119 @@ body, h1, h2, h3, p, a {
     box-sizing: border-box;
 }
 
+/* Container styling */
 .container {
-    width: 80%;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 1rem;
 }
 
 /* Header styling */
 .header {
-    background-color: #333;
-    color: white;
-    padding: 20px 0;
+    padding: 1rem 0;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
-    float: left;
-    font-size: 1.5em;
+    font-size: 1.5rem;
     font-weight: bold;
+    color: #333;
 }
 
 .nav {
-    float: right;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
 }
 
 .nav a {
-    color: white;
     text-decoration: none;
-    margin-left: 20px;
-    font-size: 1.2em;
+    color: #666;
+    transition: color 0.3s;
 }
 
 .nav a:hover {
-    text-decoration: underline;
+    color: #333;
 }
 
-.header::after {
-    content: "";
-    display: table;
-    clear: both;
+/* Buttons styling */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.btn-login {
+    background-color: transparent;
+    border: 1px solid #333;
+    color: #333;
+}
+
+.btn-login:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.btn-register {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #333;
+}
+
+.btn-register:hover {
+    background-color: #444;
+}
+
+.btn-admin {
+    background-color: #4a5568;
+    color: #fff;
+}
+
+.btn-admin:hover {
+    background-color: #2d3748;
+}
+
+.btn-logout {
+    background-color: #f56565;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-logout:hover {
+    background-color: #c53030;
+}
+
+/* User-related styling */
+.user-name {
+    color: #4a5568;
+    font-weight: 500;
 }
 
 /* Hero section styling */
 .hero {
-    background-color: #3fa32a;
-    color: white;
-    padding: 100px 0;
+    padding: 4rem 0;
+    background-color: #f7fafc;
     text-align: center;
 }
 
 .hero h2 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
 }
 
 .hero p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
+    color: #4a5568;
+    margin-bottom: 2rem;
 }
 
 .hero .btn {
@@ -81,17 +138,25 @@ body, h1, h2, h3, p, a {
 
 /* Content section styling */
 .content {
-    padding: 50px 0;
+    padding: 4rem 0;
     background-color: #f4f4f4;
     text-align: center;
 }
 
 .content h3 {
-    font-size: 2em;
-    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
 }
 
 .content p {
-    font-size: 1.2em;
-    color: #666;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+/* Additional OLD styles retained */
+.header::after {
+    content: "";
+    display: table;
+    clear: both;
 }
