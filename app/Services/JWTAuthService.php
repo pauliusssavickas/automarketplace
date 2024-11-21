@@ -32,7 +32,13 @@ class JWTAuthService
             ]
         ];
 
-        return JWT::encode($payload, $this->key, $this->algorithm);
+        //return JWT::encode($payload, $this->key, $this->algorithm);
+        $token = JWT::encode($payload, $this->key, $this->algorithm);
+
+        // Log the token for debugging
+        \Log::info('Generated Token:', ['token' => $token]);
+
+        return $token;
     }
 
     public function validateToken(string $token): ?\stdClass

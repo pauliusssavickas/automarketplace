@@ -1,6 +1,4 @@
 <?php
-// routes/web.php
-
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
@@ -12,10 +10,10 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Listings
 Route::get('/listings', function () {
-    return inertia('Listings'); 
+    return inertia('Listings');
 })->name('listings');
 
-// Individual listing details with vehicleTypeId and listingId
+// Individual listing details
 Route::get('/listings/{vehicleTypeId}/{listingId}', function ($vehicleTypeId, $listingId) {
     return inertia('ListingDetails', [
         'vehicleTypeId' => $vehicleTypeId,
@@ -23,8 +21,7 @@ Route::get('/listings/{vehicleTypeId}/{listingId}', function ($vehicleTypeId, $l
     ]);
 })->name('listing.details');
 
-
-// Auth
+// Auth routes remain the same
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);

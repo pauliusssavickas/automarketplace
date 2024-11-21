@@ -43,11 +43,12 @@ class CommentController extends Controller
         $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
                     ->findOrFail($listing_id);
 
-        // Get all comments for the specific listing
-        $comments = $listing->comments()->get();
+        // Get all comments for the specific listing with the related user data
+        $comments = $listing->comments()->with('user')->get();
 
         return response()->json($comments, 200);
     }
+
 
     // Create a new comment for a specific listing
 /**

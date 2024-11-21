@@ -1,46 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
-import '../../css/Listings.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link } from "@inertiajs/react";
+import "../../css/Listings.css";
 
-function ListingDetails() {
-    const { vehicleTypeId, listingId } = useParams(); // Get parameters from URL
+function ListingDetails({ vehicleTypeId, listingId }) {
     const [listing, setListing] = useState(null);
     const [comments, setComments] = useState([]);
-    const [loading, setLoading] = useState(true); // Add a loading state
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Fetch the listing details
     useEffect(() => {
-        axios
-            .get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}`)
-            .then((response) => {
-                setListing(response.data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error('Error fetching listing:', error);
-                setLoading(false);
-            });
-    }, [vehicleTypeId, listingId]);
+        const fetchListingData = async () => {
+            try {
+                const [listingResponse, commentsResponse] = await Promise.all([
+                    axios.get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}`),
+                    axios.get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments`),
+                ]);
 
-    // Fetch the comments
-    useEffect(() => {
-        axios
-            .get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments`)
-            .then((response) => {
-                setComments(response.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching comments:', error);
-            });
+                setListing(listingResponse.data);
+                setComments(commentsResponse.data);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        if (vehicleTypeId && listingId) {
+            fetchListingData();
+        }
     }, [vehicleTypeId, listingId]);
 
     if (loading) {
-        return <p>Loading...</p>; // Show loading until the data is fetched
+        return (
+            <div className="listings-container">
+                <div className="container">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="listings-container">
+                <div className="container">
+                    <p>Error: {error}</p>
+                </div>
+            </div>
+        );
     }
 
     if (!listing) {
-        return <p>Listing not found.</p>;
+        return (
+            <div className="listings-container">
+                <div className="container">
+                    <p>Listing not found.</p>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -49,45 +67,43 @@ function ListingDetails() {
                 <div className="container">
                     <h1 className="logo">AutoMarket</h1>
                     <nav className="nav">
-                        <Link to="/">Home</Link>
-                        <Link to={`/listings?vehicleType=${vehicleTypeId}`}>Back to Listings</Link>
+                        <Link href="/">Home</Link>
+                        <Link href="/listings">Back to Listings</Link>
                     </nav>
                 </div>
             </header>
 
-            <div className="container">
-                {/* Display listing details */}
+            <div className="listings-container">
                 <div className="listing-card">
-                    <h3>
-                        {listing.data.make} {listing.data.model}
-                    </h3>
-                    <p>
-                        <strong>Year:</strong> {listing.data.year}
-                    </p>
-                    <p>
-                        <strong>Engine Size:</strong> {listing.data.engine_size}
-                    </p>
-                    <p>
-                        <strong>Seats:</strong> {listing.data.seats}
-                    </p>
-                    <p>
-                        <strong>Storage Capacity:</strong> {listing.data.storage_capacity}
-                    </p>
-                    <p>
-                        <strong>Weight:</strong> {listing.data.weight}
-                    </p>
+                    {/* Display make and model prominently */}
+                    <div className="div-uc"><h3>{listing.data.make || "Unknown Make"} {listing.data.model || "Unknown Model"}</h3></div>
+                    <div className="details-grid">
+                        {Object.entries(listing.data).map(([key, value]) => {
+                            // Ensure key is a string
+                            if (typeof key === "string") {
+                                const capitalizedKey =
+                                    key.charAt(0).toUpperCase() +
+                                    key.slice(1).replace(/_/g, " ");
+                                return (
+                                    <p key={key}>
+                                        <strong>{capitalizedKey}:</strong> {value}
+                                    </p>
+                                );
+                            }
+                            return null; // Skip invalid fields
+                        })}
+                    </div>
                 </div>
 
-                {/* Display comments */}
                 <div className="comments-section">
                     <h3>Comments</h3>
                     {comments.length > 0 ? (
                         comments.map((comment) => (
                             <div key={comment.id} className="comment-card">
                                 <p>
-                                    <strong>User:</strong> {comment.user_id}
+                                    <strong>User:</strong> {comment.user ? comment.user.name : 'Unknown'}
                                 </p>
-                                <p>{comment.text}</p>
+                                <p>{comment.content}</p>
                                 <p>
                                     <small>{new Date(comment.created_at).toLocaleString()}</small>
                                 </p>
@@ -97,6 +113,7 @@ function ListingDetails() {
                         <p>No comments available for this listing.</p>
                     )}
                 </div>
+
             </div>
         </div>
     );

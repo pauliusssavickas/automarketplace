@@ -6,6 +6,7 @@
     <title>AutoMarket</title>
     @viteReactRefresh
     @vite(['resources/js/app.jsx'])
+    @vite(['resources/js/Pages/Header.jsx'])
     <link href="{{ asset('css/home.css') }}" rel="stylesheet">
     <link href="{{ asset('css/listings.css') }}" rel="stylesheet">
 </head>

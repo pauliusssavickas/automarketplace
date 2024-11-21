@@ -6,8 +6,10 @@ import '../css/app.css';
 
 createInertiaApp({
     title: (title) => `${title} - AutoMarket`,
-    resolve: (name) =>
-        resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
+    resolve: (name) => {
+        console.log('Resolving component:', name);
+        return resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx'));
+    },    
     setup({ el, App, props }) {
         const root = createRoot(el);
         root.render(<App {...props} />);
