@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "@inertiajs/react";
 import "../../css/Listings.css";
+import Header from "./Header";
 
 function ListingDetails({ vehicleTypeId, listingId }) {
     const [listing, setListing] = useState(null);
@@ -33,8 +34,9 @@ function ListingDetails({ vehicleTypeId, listingId }) {
 
     if (loading) {
         return (
-            <div className="listings-container">
-                <div className="container">
+            <div>
+                <Header />
+                <div className="listings-container">
                     <p>Loading...</p>
                 </div>
             </div>
@@ -43,8 +45,9 @@ function ListingDetails({ vehicleTypeId, listingId }) {
 
     if (error) {
         return (
-            <div className="listings-container">
-                <div className="container">
+            <div>
+                <Header />
+                <div className="listings-container">
                     <p>Error: {error}</p>
                 </div>
             </div>
@@ -53,8 +56,9 @@ function ListingDetails({ vehicleTypeId, listingId }) {
 
     if (!listing) {
         return (
-            <div className="listings-container">
-                <div className="container">
+            <div>
+                <Header />
+                <div className="listings-container">
                     <p>Listing not found.</p>
                 </div>
             </div>
@@ -62,17 +66,8 @@ function ListingDetails({ vehicleTypeId, listingId }) {
     }
 
     return (
-        <div className="listings-container">
-            <header className="header">
-                <div className="container">
-                    <h1 className="logo">AutoMarket</h1>
-                    <nav className="nav">
-                        <Link href="/">Home</Link>
-                        <Link href="/listings">Back to Listings</Link>
-                    </nav>
-                </div>
-            </header>
-
+        <div>
+            <Header />
             <div className="listings-container">
                 <div className="listing-card">
                     {/* Display make and model prominently */}

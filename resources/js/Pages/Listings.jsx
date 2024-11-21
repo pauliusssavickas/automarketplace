@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "./Header"; // Reusable Header Component
+import Header from "./Header";
 import "../../css/Listings.css";
 
 function Listings() {
@@ -35,10 +35,9 @@ function Listings() {
     }, [selectedVehicleType]);
 
     return (
-        <div className="listings-container">
-            <Header /> {/* Dynamic Header */}
-            <header className="listings-header">
-                <h1>Vehicle Listings</h1>
+        <div>
+            <Header />
+            <div className="listings-container">
                 <div className="vehicle-type-selector">
                     <label htmlFor="vehicle-type">Select Vehicle Type:</label>
                     <select
@@ -53,7 +52,7 @@ function Listings() {
                         ))}
                     </select>
                 </div>
-            </header>
+            </div>
 
             <section className="listings-grid">
                 {listings.length > 0 ? (

@@ -1,32 +1,49 @@
-import React from 'react';
-import { Link } from '@inertiajs/react';
+// resources/js/Pages/Header.jsx
+import React from "react";
+import { Link } from "@inertiajs/react";
+import "../../css/Header.css";
 
-function Header({ user, onLogout }) {
+const Header = ({ user, loading, onLogout }) => {
     return (
-        <header className="header">
-            <div className="container">
-                <h1 className="logo">AutoMarket</h1>
-                <nav className="nav">
-                    <Link href="/">Home</Link>
-                    <Link href="/listings">Listings</Link>
-                    {/* Check user role */}
-                    {user ? (
+        <header className="main-header">
+            <div className="header-container">
+                <Link href="/" className="logo">
+                    AutoMarket
+                </Link>
+                
+                <nav className="nav-menu">
+                    <Link href="/listings" className="nav-link">
+                        Listings
+                    </Link>
+                    
+                    {loading ? (
+                        <span className="loading">Loading...</span>
+                    ) : user ? (
                         <>
+                            <span className="welcome-text">Welcome, {user.name}</span>
                             {user.role === 'admin' && (
-                                <Link href="/admin" className="btn btn-admin">Admin Panel</Link>
+                                <Link href="/admin" className="nav-link admin-link">
+                                    Admin Panel
+                                </Link>
                             )}
-                            <button onClick={onLogout} className="btn btn-logout">Logout</button>
+                            <button onClick={onLogout} className="nav-button logout-button">
+                                Logout
+                            </button>
                         </>
                     ) : (
-                        <>
-                            <Link href="/login" className="btn btn-login">Login</Link>
-                            <Link href="/register" className="btn btn-register">Register</Link>
-                        </>
+                        <div className="auth-buttons">
+                            <Link href="/login" className="nav-button login-button">
+                                Login
+                            </Link>
+                            <Link href="/register" className="nav-button register-button">
+                                Register
+                            </Link>
+                        </div>
                     )}
                 </nav>
             </div>
         </header>
     );
-}
+};
 
 export default Header;
