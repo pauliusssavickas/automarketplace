@@ -1,9 +1,12 @@
 // resources/js/Pages/Header.jsx
 import React from "react";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import "../../css/Header.css";
 
-const Header = ({ user, loading, onLogout }) => {
+const Header = () => {
+    const { auth } = usePage().props;
+    const user = auth.user;
+
     return (
         <header className="main-header">
             <div className="header-container">
@@ -16,26 +19,34 @@ const Header = ({ user, loading, onLogout }) => {
                         Listings
                     </Link>
                     
-                    {loading ? (
-                        <span className="loading">Loading...</span>
-                    ) : user ? (
+                    {user ? (
                         <>
-                            <span className="welcome-text">Welcome, {user.name}</span>
+                            <span className="welcome-text">
+                                Hello, {user.name}
+                                {user.role === 'admin' && ' (Admin)'}
+                            </span>
+                            
                             {user.role === 'admin' && (
                                 <Link href="/admin" className="nav-link admin-link">
                                     Admin Panel
                                 </Link>
                             )}
-                            <button onClick={onLogout} className="nav-button logout-button">
+                            
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="nav-button logout-button"
+                            >
                                 Logout
-                            </button>
+                            </Link>
                         </>
                     ) : (
                         <div className="auth-buttons">
-                            <Link href="/login" className="nav-button login-button">
+                            <Link href={route('login')} className="nav-button login-button">
                                 Login
                             </Link>
-                            <Link href="/register" className="nav-button register-button">
+                            <Link href={route('register')} className="nav-button register-button">
                                 Register
                             </Link>
                         </div>

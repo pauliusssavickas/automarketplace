@@ -31,10 +31,12 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        $request->session()->regenerate();
+
         $user = $request->user();
         $token = $this->jwtService->generateToken($user);
 
-        return response()->json([
+        return redirect()->intended(route('home'))->with([
             'token' => $token,
             'user' => [
                 'id' => $user->id,
@@ -48,9 +50,10 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request)
     {
         Auth::guard('web')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return response()->json(['message' => 'Logged out successfully']);
+        return redirect('/');
     }
 }

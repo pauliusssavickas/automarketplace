@@ -21,6 +21,15 @@ Route::get('/listings/{vehicleTypeId}/{listingId}', function ($vehicleTypeId, $l
     ]);
 })->name('listing.details');
 
+// Admin Dashboard
+Route::get('/admin', function () {
+    $user = Auth::user();
+    if ($user && $user->isAdmin()) {
+        return inertia('AdminDashboard');
+    }
+    abort(403, 'Unauthorized access.');
+})->name('admin');
+
 // Auth routes remain the same
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');

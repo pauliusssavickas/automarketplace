@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Auth Card */
 .auth-card {
-    background: rgba(255, 255, 255, 0.9);
+    background: #f7fafc; /* Match the hero section background */
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -13,6 +14,7 @@
     margin: 2rem auto;
 }
 
+/* Auth Header */
 .auth-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -20,14 +22,15 @@
 
 .auth-header h1 {
     font-size: 1.875rem;
-    color: #1a1a1a;
+    color: #2d3748; /* Match hero section title color */
     font-weight: 700;
 }
 
+/* Auth Input */
 .auth-input {
     width: 100%;
     padding: 0.75rem 1rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e2e8f0; /* Soft gray for input border */
     border-radius: 0.5rem;
     margin-top: 0.5rem;
     font-size: 1rem;
@@ -36,14 +39,15 @@
 
 .auth-input:focus {
     outline: none;
-    border-color: #4f46e5;
-    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    border-color: #277019; /* Match the green in the hero section button */
+    box-shadow: 0 0 0 2px rgba(39, 112, 25, 0.2);
 }
 
+/* Auth Button */
 .auth-button {
     width: 100%;
     padding: 0.75rem 1.5rem;
-    background-color: #4f46e5;
+    background-color: #277019; /* Match the green in the hero section button */
     color: white;
     border: none;
     border-radius: 0.5rem;
@@ -53,23 +57,37 @@
 }
 
 .auth-button:hover {
-    background-color: #4338ca;
+    background-color: #1a4a10; /* Darker green for hover */
 }
 
+/* Auth Link */
 .auth-link {
-    color: #4f46e5;
+    color: #277019; /* Match the green theme */
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s ease;
 }
 
 .auth-link:hover {
-    color: #4338ca;
+    color: #1a4a10; /* Darker green for hover */
     text-decoration: underline;
 }
 
+/* Form Error */
 .form-error {
-    color: #dc2626;
+    color: #e53e3e; /* Match logout button hover red */
     font-size: 0.875rem;
     margin-top: 0.25rem;
+}
+
+/* Adjust Spacing for Consistency */
+.auth-card p {
+    margin-top: 1rem;
+    color: #4a5568; /* Match secondary text color in content */
+}
+
+.auth-header p {
+    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.5;
 }

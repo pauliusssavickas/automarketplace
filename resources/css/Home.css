@@ -1,162 +1,188 @@
-/* Basic reset */
-body, h1, h2, h3, p, a {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    box-sizing: border-box;
+/* resources/css/Home.css */
+.home-container {
+    min-height: 100vh;
+    background-color: #ffffff;
 }
 
-/* Container styling */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
+/* Hero Section & Carousel */
+.hero {
+    position: relative;
+    height: 80vh;
+    overflow: hidden;
+}
+
+.carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #ffffff;
+    z-index: 2;
+    width: 90%;
+    max-width: 800px;
+}
+
+.carousel-content h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-content p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.carousel-indicators {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 3;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    background: #ffffff;
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 50px;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Features Section */
+.features {
+    padding: 5rem 0;
+    background-color: #f8fafc;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
     padding: 0 1rem;
 }
 
-/* Header styling */
-.header {
-    padding: 1rem 0;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-}
-
-.nav {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-}
-
-.nav a {
-    text-decoration: none;
-    color: #666;
-    transition: color 0.3s;
-}
-
-.nav a:hover {
-    color: #333;
-}
-
-/* Buttons styling */
-.btn {
-    padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    text-decoration: none;
-    transition: all 0.3s;
-}
-
-.btn-login {
-    background-color: transparent;
-    border: 1px solid #333;
-    color: #333;
-}
-
-.btn-login:hover {
-    background-color: #333;
-    color: #fff;
-}
-
-.btn-register {
-    background-color: #333;
-    color: #fff;
-    border: 1px solid #333;
-}
-
-.btn-register:hover {
-    background-color: #444;
-}
-
-.btn-admin {
-    background-color: #4a5568;
-    color: #fff;
-}
-
-.btn-admin:hover {
-    background-color: #2d3748;
-}
-
-.btn-logout {
-    background-color: #f56565;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-logout:hover {
-    background-color: #c53030;
-}
-
-/* User-related styling */
-.user-name {
-    color: #4a5568;
-    font-weight: 500;
-}
-
-/* Hero section styling */
-.hero {
-    padding: 4rem 0;
-    background-color: #f7fafc;
+.feature-card {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
     text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
 }
 
-.hero h2 {
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
     font-size: 2.5rem;
-    color: #2d3748;
     margin-bottom: 1rem;
 }
 
-.hero p {
-    color: #4a5568;
-    margin-bottom: 2rem;
+.feature-card h3 {
+    color: #1a365d;
+    margin-bottom: 0.5rem;
 }
 
-.hero .btn {
-    background-color: white;
-    color: #277019;
-    padding: 10px 20px;
-    text-decoration: none;
-    font-size: 1.2em;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.hero .btn:hover {
-    background-color: #1a4a10;
-    color: white;
-}
-
-/* Content section styling */
-.content {
-    padding: 4rem 0;
-    background-color: #f4f4f4;
-    text-align: center;
-}
-
-.content h3 {
-    font-size: 2rem;
-    color: #2d3748;
-    margin-bottom: 1rem;
-}
-
-.content p {
+.feature-card p {
     color: #4a5568;
     line-height: 1.6;
 }
 
-/* Additional OLD styles retained */
-.header::after {
-    content: "";
-    display: table;
-    clear: both;
+/* About Section */
+.about {
+    padding: 5rem 0;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.about h2 {
+    color: #1a365d;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.about p {
+    color: #4a5568;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .carousel-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .carousel-content p {
+        font-size: 1.2rem;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+    }
 }

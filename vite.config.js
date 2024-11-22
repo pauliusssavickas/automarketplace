@@ -11,9 +11,13 @@ export default defineConfig({
                 'resources/js/Pages/Home.jsx',         // Home.jsx file
                 'resources/js/Pages/Listings.jsx',     // Listings.jsx file
                 'resources/js/Pages/ListingDetails.jsx', // ListingDetails.jsx file
-                'resources/css/home.css',              // Home.css file
-                'resources/css/listings.css',          // Listings.css file
+                'resources/js/Pages/Header.jsx',       // Header.jsx file
+                'resources/js/Pages/AdminDashboard.jsx', // AdminDashboard.jsx file
+                'resources/css/Home.css',              // Home.css file
+                'resources/css/Listings.css',          // Listings.css file
                 'resources/css/app.css',               // App.css file
+                'resources/css/Header.css',               // Header.css file
+                'resources/css/AdminDashboard.css',    // AdminDashboard.css file
             ],
             refresh: true,
         }),

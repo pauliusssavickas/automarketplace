@@ -1,6 +1,6 @@
 /* resources/css/Header.css */
 .main-header {
-    background-color: #1a1a1a;
+    background-color: #2d3748; /* Match the darker gray tone used in admin buttons */
     padding: 1rem 0;
     position: sticky;
     top: 0;
@@ -18,16 +18,26 @@
 }
 
 .logo {
-    color: #ffffff;
+    color: #ffffff; /* Default color (white) */
     font-size: 1.5rem;
     font-weight: bold;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .logo:hover {
-    color: #4f46e5;
+    color: #277019; /* Green hover effect */
 }
+
+/* Override potential conflicting styles */
+.main-header .header-container .logo {
+    color: #ffffff; /* Ensure the white color applies correctly */
+}
+
+.main-header .header-container .logo:hover {
+    color: #277019; /* Ensure hover effect applies correctly */
+}
+
 
 .nav-menu {
     display: flex;
@@ -42,7 +52,7 @@
 }
 
 .nav-link:hover {
-    color: #4f46e5;
+    color: #277019; /* Match the green tone used in buttons */
 }
 
 .nav-button {
@@ -57,38 +67,43 @@
 .login-button {
     background-color: transparent;
     color: #ffffff;
-    border: 1px solid #4f46e5;
+    border: 1px solid #277019; /* Match green for login border */
 }
 
 .login-button:hover {
-    background-color: #4f46e5;
+    background-color: #277019;
     color: #ffffff;
 }
 
 .register-button {
-    background-color: #4f46e5;
+    background-color: #277019; /* Match the green theme */
     color: #ffffff;
 }
 
 .register-button:hover {
-    background-color: #4338ca;
+    background-color: #1a4a10; /* Darker green for hover */
 }
 
 .logout-button {
-    background-color: #dc2626;
+    background-color: #e53e3e; /* Match red used in logout button */
     color: #ffffff;
 }
 
 .logout-button:hover {
-    background-color: #b91c1c;
+    background-color: #b91c1c; /* Slightly darker red for hover */
 }
 
 .admin-link {
-    color: #fbbf24;
+    color: #fbbf24; /* Bright yellow to differentiate admin links */
+    font-weight: bold;
+}
+
+.admin-link:hover {
+    color: #d97706; /* Slightly darker yellow for hover */
 }
 
 .welcome-text {
-    color: #9ca3af;
+    color: #9ca3af; /* Light gray for subtle text */
 }
 
 .loading {
@@ -101,13 +116,14 @@
     gap: 1rem;
 }
 
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .nav-menu {
         gap: 1rem;
     }
     
     .welcome-text {
-        display: none;
+        display: none; /* Hide welcome text on smaller screens */
     }
     
     .auth-buttons {
