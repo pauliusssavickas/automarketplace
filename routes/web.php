@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ListingController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\JWTMiddleware;
 
 // Home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -22,6 +24,8 @@ Route::get('/listings/{vehicleTypeId}/{listingId}', function ($vehicleTypeId, $l
 })->name('listing.details');
 
 // Admin Dashboard
+// Admin Dashboard
+// In routes/web.php
 Route::get('/admin', function () {
     $user = Auth::user();
     if ($user && $user->isAdmin()) {
@@ -30,12 +34,13 @@ Route::get('/admin', function () {
     abort(403, 'Unauthorized access.');
 })->name('admin');
 
+
 // Auth routes remain the same
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 });
 
 Route::middleware('auth')->group(function () {

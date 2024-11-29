@@ -6,6 +6,17 @@ body, h1, h2, h3, p, a {
     box-sizing: border-box;
 }
 
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Allow the content to grow and push the footer down */
+  .content-wrap {
+    flex: 1;
+  }
+
 /* Container Styling */
 .listings-container {
     width: 80%;
@@ -99,9 +110,9 @@ body, h1, h2, h3, p, a {
 
 /* Form Styling */
 .create-listing-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    gap: 15px; /* Add spacing between elements */
     margin-top: 20px;
     background-color: #f9f9f9;
     padding: 20px;
@@ -109,11 +120,16 @@ body, h1, h2, h3, p, a {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.form-field {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.create-listing-form .form-field {
+    width: 50%; /* Ensure input fields take up the full width */
 }
+
+.create-listing-form button.btn-create-edit {
+    align-self: flex-end; /* Align button to the right */
+    width: auto; /* Button width adjusts to content */
+    margin-top: 20px; /* Add spacing above the button */
+}
+
 
 .form-field label {
     font-weight: bold;
@@ -129,21 +145,22 @@ body, h1, h2, h3, p, a {
 }
 
 /* Buttons */
-.btn-primary, .btn-submit, .btn-edit, .btn-danger {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
+.btn-primary {
+    padding: 8px 12px; /* Adjust padding to reduce button size */
+    font-size: 0.9rem; /* Reduce font size */
+    border-radius: 4px; /* Slightly smaller border radius */
+    background-color: #4caf50;
+    color: white;
     font-weight: bold;
     text-transform: uppercase;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
     text-align: center;
-}
-
-.btn-primary {
-    background-color: #4caf50;
-    color: white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    
 }
 
 .btn-primary:hover {
@@ -151,10 +168,13 @@ body, h1, h2, h3, p, a {
     transform: translateY(-2px);
 }
 
-.btn-submit {
-    padding: 8px 15px;
-    font-size: 0.9rem;
-    border-radius: 5px;
+.listing-actions .btn-create-edit {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+    border-radius: 4px !important;
+    width: auto !important;
+    height: auto !important;
+    box-sizing: border-box !important;
     background-color: #008cba;
     color: white;
     font-weight: bold;
@@ -164,7 +184,7 @@ body, h1, h2, h3, p, a {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.btn-submit:hover {
+.listing-actions .btn-c:hover {
     background-color: #007bb5;
     transform: translateY(-2px);
 }
@@ -172,6 +192,15 @@ body, h1, h2, h3, p, a {
 .btn-edit {
     background-color: #ffc107;
     color: white;
+    padding-top: 2px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 5px;
 }
 
 .btn-edit:hover {
@@ -182,6 +211,15 @@ body, h1, h2, h3, p, a {
 .btn-danger {
     background-color: #f44336;
     color: white;
+    padding-top: 2px;
+    padding-right: 5px;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 5px;
 }
 
 .btn-danger:hover {
@@ -247,3 +285,93 @@ body, h1, h2, h3, p, a {
         flex-direction: column;
     }
 }
+
+.photo-container {
+    width: 100%;
+    height: 200px; /* Fixed height for all photos */
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .listing-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container while maintaining aspect ratio */
+  }
+  
+  /* Listing Price */
+  .listing-price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+
+  .carousel .slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .photo-carousel {
+    margin-top: 20px;
+  }
+  
+  /* Listing Details */
+.listing-details {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .details-top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .photo-carousel {
+    flex: 1;
+    min-width: 300px;
+    max-width: 500px;
+  }
+  
+  .carousel .slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  .vehicle-details {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .vehicle-details h3 {
+    margin-bottom: 15px;
+  }
+  
+  .vehicle-details p {
+    margin-bottom: 10px;
+  }
+  
+  .listing-description {
+    margin-top: 20px;
+  }
+  
+  .listing-description h4 {
+    margin-bottom: 10px;
+  }
+  
+  .listing-description p {
+    line-height: 1.6;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .details-top {
+      flex-direction: column;
+    }
+  }
+  

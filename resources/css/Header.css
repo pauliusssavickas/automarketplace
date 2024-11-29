@@ -1,4 +1,8 @@
 /* resources/css/Header.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
+
+
 .main-header {
     background-color: #2d3748; /* Match the darker gray tone used in admin buttons */
     padding: 1rem 0;
@@ -6,132 +10,236 @@
     top: 0;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.header-container {
+  }
+  
+  .header-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.logo {
+    position: relative; /* For positioning the mobile menu */
+  }
+  
+  .logo {
     color: #ffffff; /* Default color (white) */
     font-size: 1.5rem;
     font-weight: bold;
     text-decoration: none;
     transition: color 0.3s ease; /* Smooth transition for hover effect */
-}
-
-.logo:hover {
+    margin-right: 1rem;
+    font-family: 'Bruno Ace SC', sans-serif;
+  }
+  
+  .logo:hover {
     color: #277019; /* Green hover effect */
-}
-
-/* Override potential conflicting styles */
-.main-header .header-container .logo {
+  }
+  
+  /* Override potential conflicting styles */
+  .main-header .header-container .logo {
     color: #ffffff; /* Ensure the white color applies correctly */
-}
-
-.main-header .header-container .logo:hover {
+  }
+  
+  .main-header .header-container .logo:hover {
     color: #277019; /* Ensure hover effect applies correctly */
-}
-
-
-.nav-menu {
+  }
+  
+  .nav-menu {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-}
-
-.nav-link {
+  }
+  
+  .nav-link {
     color: #ffffff;
     text-decoration: none;
     transition: color 0.3s ease;
-}
-
-.nav-link:hover {
+  }
+  
+  .nav-link:hover {
     color: #277019; /* Match the green tone used in buttons */
-}
-
-.nav-button {
+  }
+  
+  .nav-button {
     padding: 0.5rem 1rem;
     border-radius: 0.375rem;
     font-weight: 500;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
-}
-
-.login-button {
+  }
+  
+  .login-button {
     background-color: transparent;
     color: #ffffff;
     border: 1px solid #277019; /* Match green for login border */
-}
-
-.login-button:hover {
+  }
+  
+  .login-button:hover {
     background-color: #277019;
     color: #ffffff;
-}
-
-.register-button {
+  }
+  
+  .register-button {
     background-color: #277019; /* Match the green theme */
     color: #ffffff;
-}
-
-.register-button:hover {
+  }
+  
+  .register-button:hover {
     background-color: #1a4a10; /* Darker green for hover */
-}
-
-.logout-button {
+  }
+  
+  .logout-button {
     background-color: #e53e3e; /* Match red used in logout button */
     color: #ffffff;
-}
-
-.logout-button:hover {
+  }
+  
+  .logout-button:hover {
     background-color: #b91c1c; /* Slightly darker red for hover */
-}
-
-.admin-link {
+  }
+  
+  .admin-link {
     color: #fbbf24; /* Bright yellow to differentiate admin links */
     font-weight: bold;
-}
-
-.admin-link:hover {
+  }
+  
+  .admin-link:hover {
     color: #d97706; /* Slightly darker yellow for hover */
-}
-
-.welcome-text {
+  }
+  
+  .welcome-text {
     color: #9ca3af; /* Light gray for subtle text */
-}
-
-.loading {
+  }
+  
+  .loading {
     color: #9ca3af;
     font-style: italic;
-}
-
-.auth-buttons {
+  }
+  
+  .auth-buttons {
     display: flex;
     gap: 1rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
+  }
+  
+  /* Mobile Menu Toggle Button */
+  .mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+    margin-right: 25px;
+  }
+  
+  /* Hamburger Icon */
+  .hamburger-icon {
+    width: 25px;
+    height: 2px;
+    background-color: #fff;
+    position: relative;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .hamburger-icon::before,
+  .hamburger-icon::after {
+    content: '';
+    width: 25px;
+    height: 2px;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .hamburger-icon::before {
+    top: -8px;
+  }
+  
+  .hamburger-icon::after {
+    top: 8px;
+  }
+  
+  .mobile-menu-toggle.open .hamburger-icon {
+    background-color: transparent;
+  }
+  
+  .mobile-menu-toggle.open .hamburger-icon::before {
+    transform: rotate(45deg);
+    top: 0;
+  }
+  
+  .mobile-menu-toggle.open .hamburger-icon::after {
+    transform: rotate(-45deg);
+    top: 0;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .mobile-menu-toggle {
+      display: block;
+      z-index: 1100; /* Ensure it stays above the menu */
+    }
+  
     .nav-menu {
-        gap: 1rem;
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+      background-color: #2d3748;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      z-index: 1000;
     }
-    
+  
+    .nav-menu.open {
+      display: flex;
+    }
+  
+    .nav-menu .nav-link,
+    .nav-menu .nav-button {
+      width: 100%;
+      padding: 1rem;
+      border-bottom: 1px solid #444;
+      text-align: left;
+    }
+  
+    .nav-menu .nav-link:last-child,
+    .nav-menu .nav-button:last-child {
+      border-bottom: none;
+    }
+  
+    .nav-menu .nav-button {
+      margin: 0;
+    }
+  
     .welcome-text {
-        display: none; /* Hide welcome text on smaller screens */
+      display: none; /* Hide welcome text on smaller screens */
     }
-    
+  
     .auth-buttons {
-        gap: 0.5rem;
+      flex-direction: column;
+      width: 100%;
     }
-    
+  
     .nav-button {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
+      width: 100%;
+      text-align: left;
     }
-}
+  }
+  
+  /* Ensure nav-menu is displayed on larger screens */
+  @media (min-width: 769px) {
+    .nav-menu {
+      display: flex !important;
+    }
+  
+    .mobile-menu-toggle {
+      display: none;
+    }
+  }
+  

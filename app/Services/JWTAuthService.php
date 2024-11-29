@@ -14,7 +14,6 @@ class JWTAuthService
 
     public function __construct()
     {
-        //dd(config('jwt.jwt_secret'));
         $this->key = config('jwt.jwt_secret');
         $this->algorithm = 'HS256';
     }
@@ -24,21 +23,29 @@ class JWTAuthService
         $payload = [
             'iss' => config('app.url'),
             'iat' => time(),
-            'exp' => time() + (60 * 60 * 24), // 24 hours
+            'exp' => time() + (60 * 60), // 1 hour for access token
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
-                'role' => $user->role ?? 'user', // Default to 'user' if not set
+                'role' => $user->role ?? 'user',
             ]
         ];
 
-        //return JWT::encode($payload, $this->key, $this->algorithm);
-        $token = JWT::encode($payload, $this->key, $this->algorithm);
+        return JWT::encode($payload, $this->key, $this->algorithm);
+    }
 
-        // Log the token for debugging
-        \Log::info('Generated Token:', ['token' => $token]);
+    public function generateRefreshToken(User $user): string
+    {
+        $payload = [
+            'iss' => config('app.url'),
+            'iat' => time(),
+            'exp' => time() + (60 * 60 * 24 * 7), // 7 days for refresh token
+            'user' => [
+                'id' => $user->id,
+            ]
+        ];
 
-        return $token;
+        return JWT::encode($payload, $this->key, $this->algorithm);
     }
 
     public function validateToken(string $token): ?\stdClass
@@ -48,13 +55,5 @@ class JWTAuthService
         } catch (\Exception $e) {
             return null;
         }
-    }
-
-    public function getUser($token): ?User
-    {
-        $payload = $this->validateToken($token);
-        if (!$payload) return null;
-
-        return User::find($payload->user->id);
     }
 }

@@ -1,0 +1,99 @@
+/* Footer.css */
+
+/* Footer Container */
+.main-footer {
+    background-color: #2d3748; /* Match header background */
+    color: #ffffff;
+    padding: 2rem 0;
+  }
+  
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  
+  /* Footer Left */
+  .footer-left {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .footer-logo {
+    font-family: 'Bruno Ace SC', sans-serif; /* Use the custom font */
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-left p {
+    font-size: 0.9rem;
+  }
+  
+  /* Footer Center */
+  .footer-center {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .footer-links {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .footer-links li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .footer-links a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-links a:hover {
+    color: #277019; /* Green hover effect */
+  }
+  
+  /* Footer Right */
+  .footer-right {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-icons a {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  
+  .social-icons a:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .footer-left,
+    .footer-center,
+    .footer-right {
+      margin-bottom: 1.5rem;
+    }
+  
+    .social-icons {
+      justify-content: center;
+    }
+  }
+  

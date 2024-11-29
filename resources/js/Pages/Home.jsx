@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "@inertiajs/react";
 import Header from "./Header";
+import Footer from './Footer';
 import "../../css/Home.css";
 
 const Home = () => {
@@ -96,7 +97,7 @@ const Home = () => {
             </section>
 
             <section className="features">
-                <div className="container">
+                <div>
                     <div className="feature-grid">
                         <div className="feature-card">
                             <div className="feature-icon">🚗</div>
@@ -118,7 +119,7 @@ const Home = () => {
             </section>
 
             <section className="about">
-                <div className="container">
+                <div>
                     <h2>About AutoMarket</h2>
                     <p>
                         AutoMarket is your premium destination for exceptional vehicles. 
@@ -127,6 +128,7 @@ const Home = () => {
                     </p>
                 </div>
             </section>
+            <Footer />
         </div>
     );
 };

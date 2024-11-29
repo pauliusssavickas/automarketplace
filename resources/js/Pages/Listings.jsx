@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../utils/axiosConfig";
 import Header from "./Header";
 import "../../css/Listings.css";
+import Footer from './Footer';
 
-function Listings({ auth }) {
+
+function Listings() {
   const [vehicleTypes, setVehicleTypes] = useState([]);
   const [selectedVehicleType, setSelectedVehicleType] = useState(null);
   const [selectedTypeFields, setSelectedTypeFields] = useState([]);
@@ -11,9 +13,16 @@ function Listings({ auth }) {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editListing, setEditListing] = useState(null);
   const [newListing, setNewListing] = useState({});
+  const [auth, setAuth] = useState({ user: null });
+  const [photosToUpload, setPhotosToUpload] = useState([]);
 
   useEffect(() => {
-    axios
+    const user = JSON.parse(localStorage.getItem("user"));
+    setAuth({ user });
+  }, []);
+
+  useEffect(() => {
+    apiClient
       .get("/api/vehicle-types")
       .then((response) => {
         setVehicleTypes(response.data);
@@ -32,20 +41,25 @@ function Listings({ auth }) {
 
   const fetchVehicleTypeFields = async () => {
     try {
-      const response = await axios.get(`/api/vehicle-types/${selectedVehicleType}`);
+      const response = await apiClient.get(`/api/vehicle-types/${selectedVehicleType}`);
       setSelectedTypeFields(response.data.fields || []);
       const initialValues = {};
       response.data.fields.forEach((field) => {
-        initialValues[field.name] = '';
+        initialValues[field.name] = "";
       });
-      setNewListing(initialValues);
+      setNewListing({
+        ...initialValues,
+        price: "",
+        contact_number: "",
+        description: ""
+      });
     } catch (error) {
       console.error("Error fetching vehicle type fields:", error);
     }
   };
 
   const fetchListings = () => {
-    axios
+    apiClient
       .get(`/api/vehicle-types/${selectedVehicleType}/listings`)
       .then((response) => {
         setListings(response.data);
@@ -58,16 +72,45 @@ function Listings({ auth }) {
   const handleCreateOrUpdateListing = async (e) => {
     e.preventDefault();
     try {
+      const formData = new FormData();
+
+      // Add all data fields to FormData
+      Object.keys(newListing).forEach((key) => {
+        if (key !== "price" && key !== "contact_number" && key !== "description") {
+          formData.append(`data[${key}]`, newListing[key]);
+        }
+      });
+
+      // Add price, contact number, and description
+      formData.append("price", newListing.price || "");
+      formData.append("contact_number", newListing.contact_number || "");
+      formData.append("description", newListing.description || "");
+
+      // Add photos
+      photosToUpload.forEach((photo, index) => {
+        formData.append(`photos[${index}]`, photo);
+      });
+
       if (editListing) {
-        await axios.put(
-          `/api/vehicle-types/${selectedVehicleType}/listings/${editListing.id}`,
-          { data: newListing }
+        await apiClient.post(
+          `/api/vehicle-types/${selectedVehicleType}/listings/${editListing.id}?_method=PUT`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          }
         );
       } else {
-        await axios.post(`/api/vehicle-types/${selectedVehicleType}/listings`, {
-          data: newListing,
-          user_id: auth.user.id,
-        });
+        await apiClient.post(
+          `/api/vehicle-types/${selectedVehicleType}/listings`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          }
+        );
       }
       resetForm();
       fetchListings();
@@ -78,53 +121,70 @@ function Listings({ auth }) {
 
   const handleEditListing = (listing) => {
     setEditListing(listing);
-    setNewListing(listing.data);
+    setNewListing({
+      ...listing.data,
+      price: listing.price,
+      contact_number: listing.contact_number,
+      description: listing.description
+    });
     setShowCreateForm(true);
   };
 
-  const handleDeleteListing = async (listingId) => {
-    if (!confirm("Are you sure you want to delete this listing?")) return;
-
-    try {
-      await axios.delete(`/api/vehicle-types/${selectedVehicleType}/listings/${listingId}`);
-      fetchListings();
-    } catch (error) {
-      console.error("Error deleting listing:", error);
-    }
+  const handlePhotoUpload = (e) => {
+    setPhotosToUpload(Array.from(e.target.files));
   };
 
   const handleInputChange = (fieldName, value) => {
     setNewListing((prev) => ({
       ...prev,
-      [fieldName]: value,
+      [fieldName]: value
     }));
   };
 
   const resetForm = () => {
     setShowCreateForm(false);
     setEditListing(null);
+    setPhotosToUpload([]);
     const emptyValues = {};
     selectedTypeFields.forEach((field) => {
-      emptyValues[field.name] = '';
+      emptyValues[field.name] = "";
     });
-    setNewListing(emptyValues);
+    setNewListing({
+      ...emptyValues,
+      price: "",
+      contact_number: "",
+      description: ""
+    });
   };
 
-  const canManageListings = auth.user && (auth.user.role === 'admin' || auth.user.role === 'user');
+  const handleDeleteListing = async (listingId) => {
+    if (!window.confirm("Are you sure you want to delete this listing?")) return;
+
+    try {
+      await apiClient.delete(`/api/vehicle-types/${selectedVehicleType}/listings/${listingId}`);
+      fetchListings();
+    } catch (error) {
+      console.error("Error deleting listing:", error);
+    }
+  };
+
+  const canManageListings =
+    auth.user && (auth.user.role === "admin" || auth.user.role === "user");
 
   const renderFormField = (field) => {
     const fieldName = field.name;
     const isRequired = field.required;
-    const capitalizedName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, ' ');
+    const capitalizedName =
+      fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ");
 
     return (
       <div key={fieldName} className="form-field">
         <label htmlFor={fieldName}>{capitalizedName}:</label>
         <input
-          type={fieldName === 'year' ? 'number' : 'text'}
+          type={fieldName === "year" ? "number" : "text"}
           id={fieldName}
           placeholder={capitalizedName}
-          value={newListing[fieldName] || ''}
+          value={newListing[fieldName] || ""}
           onChange={(e) => handleInputChange(fieldName, e.target.value)}
           required={isRequired}
           className="form-input"
@@ -134,15 +194,16 @@ function Listings({ auth }) {
   };
 
   return (
-    <div>
-      <Header />
+    <div className="page-container"> {/* Wrapper for the entire page */}
+    <Header />
+    <div className="content-wrap"> {/* Wrapper for the main content */}
       <div className="listings-container">
         <div className="vehicle-type-selector">
           <label htmlFor="vehicle-type">Select Vehicle Type:</label>
           <select
             id="vehicle-type"
             onChange={(e) => setSelectedVehicleType(e.target.value)}
-            value={selectedVehicleType || ''}
+            value={selectedVehicleType || ""}
           >
             <option value="">-- Select Vehicle Type --</option>
             {vehicleTypes.map((vehicleType) => (
@@ -157,7 +218,10 @@ function Listings({ auth }) {
           <div className="listing-actions">
             <button
               className="btn-primary"
-              onClick={() => setShowCreateForm(!showCreateForm)}
+              onClick={() => {
+                resetForm();
+                setShowCreateForm(!showCreateForm);
+              }}
             >
               {showCreateForm ? "Cancel" : editListing ? "Edit Listing" : "Create New Listing"}
             </button>
@@ -165,7 +229,62 @@ function Listings({ auth }) {
             {showCreateForm && (
               <form onSubmit={handleCreateOrUpdateListing} className="create-listing-form">
                 {selectedTypeFields.map((field) => renderFormField(field))}
-                <button type="submit" className="btn-submit">
+
+                {/* Price Field */}
+                <div className="form-field">
+                  <label htmlFor="price">Price:</label>
+                  <input
+                    type="number"
+                    id="price"
+                    placeholder="Price"
+                    value={newListing.price || ""}
+                    onChange={(e) => handleInputChange("price", e.target.value)}
+                    required
+                    className="form-input"
+                  />
+                </div>
+
+                {/* Contact Number Field */}
+                <div className="form-field">
+                  <label htmlFor="contact_number">Contact Number:</label>
+                  <input
+                    type="text"
+                    id="contact_number"
+                    placeholder="Contact Number"
+                    value={newListing.contact_number || ""}
+                    onChange={(e) => handleInputChange("contact_number", e.target.value)}
+                    required
+                    className="form-input"
+                  />
+                </div>
+
+                {/* Description Field */}
+                <div className="form-field">
+                  <label htmlFor="description">Description:</label>
+                  <textarea
+                    id="description"
+                    placeholder="Description"
+                    value={newListing.description || ""}
+                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    required
+                    className="form-textarea"
+                  />
+                </div>
+
+                {/* Photo Upload Field */}
+                <div className="form-field">
+                  <label htmlFor="photos">Upload Photos:</label>
+                  <input
+                    type="file"
+                    id="photos"
+                    multiple
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    className="form-input"
+                  />
+                </div>
+
+                <button type="submit" className="btn-create-edit">
                   {editListing ? "Update Listing" : "Create Listing"}
                 </button>
               </form>
@@ -177,13 +296,30 @@ function Listings({ auth }) {
           {listings.length > 0 ? (
             listings.map((listing) => (
               <div key={listing.id} className="listing-card">
-                <a href={`/listings/${selectedVehicleType}/${listing.id}`} className="listing-link">
-                  <h3>
-                    {listing.data.make || "Unknown Make"} {listing.data.model || "Unknown Model"}
-                  </h3>
+                <a
+                  href={`/listings/${selectedVehicleType}/${listing.id}`}
+                  className="listing-link"
+                >
+                  {/* Display Primary Photo or Placeholder */}
+                  <div className="photo-container">
+                    <img
+                      src={
+                        listing.photos && listing.photos.length > 0
+                            ? `/storage/${listing.photos.find(photo => photo.is_primary)?.photo_path || listing.photos[0].photo_path}`
+                            : `/images/placeholder.png`
+                    }
+                      alt="Vehicle"
+                      className="listing-photo"
+                    />
+                  </div>
+                  {/* Display Price */}
+                  <p className="listing-price">
+                    <strong>Price:</strong> ${listing.price}
+                  </p>
+                  {/* Display Data Fields */}
                   {Object.entries(listing.data).map(([key, value]) => {
                     const capitalizedKey =
-                      key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+                      key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ");
                     return (
                       <p key={key}>
                         <strong>{capitalizedKey}:</strong> {value}
@@ -191,24 +327,29 @@ function Listings({ auth }) {
                     );
                   })}
                 </a>
-                {canManageListings && 
-                  (auth.user.role === 'admin' || auth.user.id === listing.user_id) && (
-                  <div className="listing-actions">
-                    <button className="btn-edit" onClick={() => handleEditListing(listing)}>
-                      Edit
-                    </button>
-                    <button className="btn-danger" onClick={() => handleDeleteListing(listing.id)}>
-                      Delete
-                    </button>
-                  </div>
-                )}
+                {canManageListings &&
+                  (auth.user.role === "admin" || auth.user.id === listing.user_id) && (
+                    <div className="listing-actions">
+                      <button className="btn-edit" onClick={() => handleEditListing(listing)}>
+                        Edit
+                      </button>
+                      <button
+                        className="btn-danger"
+                        onClick={() => handleDeleteListing(listing.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
               </div>
             ))
           ) : (
             <p>No listings available for this vehicle type.</p>
           )}
         </section>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

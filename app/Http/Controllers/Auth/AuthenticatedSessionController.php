@@ -30,22 +30,22 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request)
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
         $user = $request->user();
         $token = $this->jwtService->generateToken($user);
 
-        return redirect()->intended(route('home'))->with([
+        return response()->json([
             'token' => $token,
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'role' => $user->role
-            ]
+                'role' => $user->role,
+            ],
         ]);
     }
+
 
     public function destroy(Request $request)
     {

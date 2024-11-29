@@ -1,11 +1,14 @@
-// resources/js/Pages/ListingDetails.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "@inertiajs/react";
-import "../../css/Listings.css";
+import apiClient from "../utils/axiosConfig";
 import Header from "./Header";
+import "../../css/Listings.css";
+import Footer from "./Footer";
 
-function ListingDetails({ vehicleTypeId, listingId, auth }) {
+// Import Carousel
+import { Carousel } from 'react-responsive-carousel';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+
+function ListingDetails({ vehicleTypeId, listingId }) {
   const [listing, setListing] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,14 +16,18 @@ function ListingDetails({ vehicleTypeId, listingId, auth }) {
   const [newComment, setNewComment] = useState("");
   const [editingComment, setEditingComment] = useState(null);
   const [editedContent, setEditedContent] = useState("");
+  const [auth, setAuth] = useState({ user: null });
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setAuth({ user });
+  }, []);
 
   const fetchData = async () => {
     try {
       const [listingResponse, commentsResponse] = await Promise.all([
-        axios.get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}`),
-        axios.get(
-          `/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments`
-        ),
+        apiClient.get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}`),
+        apiClient.get(`/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments`),
       ]);
       setListing(listingResponse.data);
       setComments(commentsResponse.data);
@@ -40,70 +47,115 @@ function ListingDetails({ vehicleTypeId, listingId, auth }) {
   const handleAddComment = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      await apiClient.post(
         `/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments`,
-        {
-          content: newComment,
-          user_id: auth.user.id,
-        }
+        { content: newComment }
       );
       setNewComment("");
       fetchData();
     } catch (error) {
-      console.error("Error adding comment:", error);
+      console.error("Error adding comment:", error.response?.data || error.message);
     }
   };
 
   const handleUpdateComment = async (commentId) => {
     try {
-      await axios.put(
+      await apiClient.put(
         `/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments/${commentId}`,
-        {
-          content: editedContent,
-        }
+        { content: editedContent }
       );
       setEditingComment(null);
       setEditedContent("");
       fetchData();
     } catch (error) {
-      console.error("Error updating comment:", error);
+      console.error("Error updating comment:", error.response?.data || error.message);
     }
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
 
     try {
-      await axios.delete(
+      await apiClient.delete(
         `/api/vehicle-types/${vehicleTypeId}/listings/${listingId}/comments/${commentId}`
       );
       fetchData();
     } catch (error) {
-      console.error("Error deleting comment:", error);
+      console.error("Error deleting comment:", error.response?.data || error.message);
     }
   };
 
-  const canManageComments = auth.user && 
-    (auth.user.role === 'admin' || auth.user.role === 'user');
+  const canManageComments =
+    auth.user && (auth.user.role === "admin" || auth.user.role === "user");
 
-  if (loading) return <div><Header /><div className="listings-container"><p>Loading...</p></div></div>;
-  if (error) return <div><Header /><div className="listings-container"><p>Error: {error}</p></div></div>;
-  if (!listing) return <div><Header /><div className="listings-container"><p>Listing not found.</p></div></div>;
+  if (loading)
+    return (
+      <div>
+        <Header />
+        <div className="listings-container">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  if (error)
+    return (
+      <div>
+        <Header />
+        <div className="listings-container">
+          <p>Error: {error}</p>
+        </div>
+      </div>
+    );
+  if (!listing)
+    return (
+      <div>
+        <Header />
+        <div className="listings-container">
+          <p>Listing not found.</p>
+        </div>
+      </div>
+    );
 
   return (
-    <div>
-      <Header />
+    <div className="page-container">
+        <Header />
+        <div className="content-wrap">
       <div className="listings-container">
-        <div className="listing-card">
-          <div className="div-uc">
-            <h3>
-              {listing.data.make || "Unknown Make"}{" "}
-              {listing.data.model || "Unknown Model"}
-            </h3>
-          </div>
-          <div className="details-grid">
-            {Object.entries(listing.data).map(([key, value]) => {
-              if (typeof key === "string") {
+        <div className="listing-details">
+
+          {/* Carousel and Details Side by Side */}
+          <div className="details-top">
+            {/* Photo Carousel */}
+            {listing.photos && listing.photos.length > 0 && (
+              <div className="photo-carousel">
+                <Carousel showThumbs={true} infiniteLoop={true}>
+                  {listing.photos.map((photo, index) => (
+                    <div key={index}>
+                      <img
+                        src={`/storage/${photo.photo_path}`}
+                        alt={`Photo ${index + 1}`}
+                        className="carousel-image"
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            )}
+
+            {/* Vehicle Details */}
+            <div className="vehicle-details">
+              <h3>
+                {listing.data.make || "Unknown Make"} {listing.data.model || "Unknown Model"}
+              </h3>
+
+              {/* Display Price */}
+              <p><strong>Price:</strong> ${listing.price}</p>
+
+              {/* Display Contact Number */}
+              <p><strong>Contact Number:</strong> {listing.contact_number}</p>
+
+              {/* Display Vehicle Type Fields */}
+              {Object.entries(listing.data).map(([key, value]) => {
                 const capitalizedKey =
                   key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, " ");
                 return (
@@ -111,15 +163,21 @@ function ListingDetails({ vehicleTypeId, listingId, auth }) {
                     <strong>{capitalizedKey}:</strong> {value}
                   </p>
                 );
-              }
-              return null;
-            })}
+              })}
+            </div>
           </div>
+
+          {/* Description */}
+          <div className="listing-description">
+            <h4>Description</h4>
+            <p>{listing.description}</p>
+          </div>
+
         </div>
 
         <div className="comments-section">
           <h3>Comments</h3>
-          
+
           {canManageComments && (
             <form onSubmit={handleAddComment} className="comment-form">
               <textarea
@@ -168,27 +226,26 @@ function ListingDetails({ vehicleTypeId, listingId, auth }) {
                         {new Date(comment.created_at).toLocaleString()}
                       </small>
                     </p>
-                    {canManageComments && 
-                      (auth.user.role === 'admin' || 
-                       auth.user.id === comment.user_id) && (
-                      <div className="comment-actions">
-                        <button
-                          onClick={() => {
-                            setEditingComment(comment.id);
-                            setEditedContent(comment.content);
-                          }}
-                          className="btn-secondary"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleDeleteComment(comment.id)}
-                          className="btn-danger"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
+                    {canManageComments &&
+                      (auth.user.role === "admin" || auth.user.id === comment.user_id) && (
+                        <div className="comment-actions">
+                          <button
+                            onClick={() => {
+                              setEditingComment(comment.id);
+                              setEditedContent(comment.content);
+                            }}
+                            className="btn-secondary"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="btn-danger"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                   </>
                 )}
               </div>
@@ -198,6 +255,8 @@ function ListingDetails({ vehicleTypeId, listingId, auth }) {
           )}
         </div>
       </div>
+    </div>
+      <Footer /> {/* Added Footer */}
     </div>
   );
 }

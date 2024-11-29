@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import Header from "./Header";
 import axios from "axios";
 import "../../css/AdminDashboard.css";
+import apiClient from "../utils/axiosConfig";
+import Footer from './Footer';
+
 
 const AdminDashboard = () => {
   const [vehicleTypes, setVehicleTypes] = useState([]);
@@ -18,7 +21,7 @@ const AdminDashboard = () => {
 
   const fetchVehicleTypes = async () => {
     try {
-      const response = await axios.get("/api/vehicle-types");
+      const response = await apiClient.get("/api/vehicle-types");
       setVehicleTypes(response.data);
     } catch (error) {
       console.error("Error fetching vehicle types:", error);
@@ -50,7 +53,7 @@ const AdminDashboard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/vehicle-types", newVehicleType);
+      await apiClient.post("/api/vehicle-types", newVehicleType);
       setSuccessMessage("Vehicle type created successfully!");
       setErrorMessage("");
       setNewVehicleType({ name: "", fields: [{ name: "", required: false }] });
@@ -145,6 +148,7 @@ const AdminDashboard = () => {
           </form>
         </section>
       </div>
+      <Footer />
     </div>
   );
 };

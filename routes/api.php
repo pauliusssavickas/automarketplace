@@ -4,27 +4,34 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VehicleTypeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\AuthController;
 
-// API Routes for vehicle types, listings, and comments
-Route::middleware('api')->group(function () {
-    // Vehicle Types
-    Route::apiResource('vehicle-types', VehicleTypeController::class);
+// Public access routes (no middleware)
+Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
+Route::get('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'show']); // Add this line
+Route::get('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'index']);
+Route::get('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'show']);
+Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'index']);
 
-    // Nested routes for Listings under a specific Vehicle Type
-    Route::get('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'index']);
+// Authentication routes
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/refresh', [AuthController::class, 'refreshToken']);
+
+// Protected routes for authenticated users
+Route::middleware(['jwt:user,admin'])->group(function () {
+    // Listings
     Route::post('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'store']);
-    Route::get('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'show']);
     Route::put('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'update']);
     Route::delete('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'destroy']);
-    //Route::get('/vehicle-types/{vehicleTypeId}/listings/{listingId}', [ListingController::class, 'show']);
-    
 
-
-    // Nested routes for Comments under a specific Listing
-    Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'index']);
+    // Comments
     Route::post('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'store']);
-    Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'show']);
     Route::put('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'update']);
     Route::delete('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'destroy']);
 });
 
+// Admin-only routes
+Route::middleware(['jwt:admin'])->group(function () {
+    Route::apiResource('vehicle-types', VehicleTypeController::class)->except(['index', 'show']);
+});
