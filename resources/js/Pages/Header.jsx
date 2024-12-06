@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "@inertiajs/react";
 import "../../css/Header.css";
+import axios from "axios";
 
 const Header = () => {
   const [user, setUser] = useState(null);
@@ -11,11 +12,19 @@ const Header = () => {
     setUser(storedUser);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
-    window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      // CHANGED: Make a POST request to /logout with credentials included
+      await axios.post('/logout', {}, { withCredentials: true });
+      // Remove localStorage items after successful server logout
+      localStorage.removeItem("token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("user");
+      // Redirect to login
+      window.location.href = "/login";
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (

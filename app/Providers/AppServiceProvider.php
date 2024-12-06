@@ -23,7 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
 
-        // Register the 'jwt' middleware alias
+        // Register middleware aliases
+        // Ensure that 'EncryptCookies' and 'AddQueuedCookiesToResponse' exist
         Route::aliasMiddleware('jwt', \App\Http\Middleware\JWTMiddleware::class);
+        Route::aliasMiddleware('cookies.encrypt', \App\Http\Middleware\EncryptCookies::class);
+        Route::aliasMiddleware('cookies.add', \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class);
     }
 }

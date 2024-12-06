@@ -1,11 +1,9 @@
 <?php
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\ListingController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Middleware\JWTMiddleware;
 
 // Home page
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -23,17 +21,10 @@ Route::get('/listings/{vehicleTypeId}/{listingId}', function ($vehicleTypeId, $l
     ]);
 })->name('listing.details');
 
-// Admin Dashboard
-// Admin Dashboard
-// In routes/web.php
+// Admin Dashboard - Now with middleware
 Route::get('/admin', function () {
-    $user = Auth::user();
-    if ($user && $user->isAdmin()) {
-        return inertia('AdminDashboard');
-    }
-    abort(403, 'Unauthorized access.');
-})->name('admin');
-
+    return inertia('AdminDashboard');
+})->middleware(['jwt:admin'])->name('admin');
 
 // Auth routes remain the same
 Route::middleware('guest')->group(function () {
@@ -43,6 +34,4 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register');
 });
 
-Route::middleware('auth')->group(function () {
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-});
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('jwt')->name('logout');

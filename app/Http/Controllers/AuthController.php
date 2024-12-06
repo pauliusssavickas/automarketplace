@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    protected $jwtService;
+    private $jwtService;
 
     public function __construct(JWTAuthService $jwtService)
     {
@@ -22,29 +22,37 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $validator = Validator::make($credentials, [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Invalid credentials'], 422);
-        }
-
-        $user = User::where('email', $credentials['email'])->first();
-
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+        if (!Auth::attempt($credentials)) {
             return response()->json(['error' => 'Invalid credentials'], 401);
         }
 
+        $user = Auth::user(); // Now $user should be a User object
         $token = $this->jwtService->generateToken($user);
         $refreshToken = $this->jwtService->generateRefreshToken($user);
+
+        // Create HttpOnly, Lax cookie
+        $cookie = cookie(
+            'jwt_token',
+            $token,
+            60,          // minutes
+            '/',         // path
+            null,        // domain
+            false,       // secure (false for local dev over http)
+            true,        // httpOnly
+            false,       // raw
+            'Lax'        // SameSite
+        );
 
         return response()->json([
             'token' => $token,
             'refresh_token' => $refreshToken,
-            'user' => $user,
-        ], 200);
+            'user' => [
+                'id'    => $user->id,
+                'name'  => $user->name,
+                'email' => $user->email,
+                'role'  => $user->role,
+            ],
+        ])->withCookie($cookie);
     }
 
     public function register(Request $request)

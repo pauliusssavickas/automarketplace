@@ -16,7 +16,9 @@ export default function Login() {
     setProcessing(true);
 
     try {
-      const response = await axios.post("/api/auth/login", data);
+      const response = await axios.post("/api/auth/login", data, {
+        withCredentials: true,
+      });
       const { token, refresh_token, user } = response.data;
 
       if (token) {

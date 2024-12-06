@@ -1,13 +1,14 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "/",
+  baseURL: '/',
+  withCredentials: true, // Ensure cookies are included
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to include the token
+// Request interceptor to include the token from localStorage if present
 apiClient.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("token");
@@ -21,7 +22,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle 401 errors and refresh token
+// Response interceptor for handling 401 errors and refreshing tokens
 apiClient.interceptors.response.use(
   function (response) {
     return response;
@@ -30,7 +31,7 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     if (
-      error.response.status === 401 &&
+      error.response?.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.includes("/api/auth/refresh")
     ) {
@@ -40,6 +41,8 @@ apiClient.interceptors.response.use(
         try {
           const response = await axios.post("/api/auth/refresh", {
             refresh_token: refreshToken,
+          }, {
+            withCredentials: true
           });
           const { token, refresh_token } = response.data;
           localStorage.setItem("token", token);

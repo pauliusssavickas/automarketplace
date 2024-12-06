@@ -8,6 +8,7 @@ use App\Services\JWTAuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AuthenticatedSessionController extends Controller
@@ -29,23 +30,56 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request)
     {
+        // Extensive logging for debugging
+        Log::channel('daily')->info('Login Attempt', [
+            'email' => $request->input('email'),
+            'ip' => $request->ip()
+        ]);
+
         $request->authenticate();
         $request->session()->regenerate();
 
         $user = $request->user();
         $token = $this->jwtService->generateToken($user);
 
-        return response()->json([
+        // Detailed logging of token generation
+        Log::channel('daily')->info('Token Generated', [
+            'user_id' => $user->id,
+            'token' => $token,
+            'user_role' => $user->role
+        ]);
+
+        // More comprehensive cookie creation
+        $cookie = cookie(
+            'jwt_token',
+            $token,
+            60,    // minutes
+            '/',   // path
+            null,  // domain
+            env('APP_ENV') === 'production', // secure based on environment
+            true,  // httpOnly
+            false, // raw
+            'Lax'  // SameSite
+        );
+
+        // Debugging response
+        $response = response()->json([
             'token' => $token,
             'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
+                'id'    => $user->id,
+                'name'  => $user->name,
                 'email' => $user->email,
-                'role' => $user->role,
+                'role'  => $user->role,
             ],
-        ]);
-    }
+        ])->withCookie($cookie);
 
+        // Log the full response headers
+        Log::channel('daily')->info('Response Headers', [
+            'headers' => $response->headers->all()
+        ]);
+
+        return $response;
+    }
 
     public function destroy(Request $request)
     {
@@ -54,6 +88,20 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // CHANGED: Match the same attributes as when the cookie was set
+        // and set a negative expiration to remove the cookie
+        $expiredCookie = cookie(
+            'jwt_token',
+            '',     // empty value
+            -1,     // negative expiration to remove the cookie
+            '/',    // same path
+            null,   // same domain (null)
+            false,  // secure=false same as above
+            true,   // httpOnly=true same as above
+            false,  // raw=false same as above
+            'Lax'   // SameSite=Lax same as above
+        );
+
+        return redirect('/')->withCookie($expiredCookie);
     }
 }
