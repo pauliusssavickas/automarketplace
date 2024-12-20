@@ -11,21 +11,31 @@ const Header = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     setUser(storedUser);
   }, []);
-
+  
   const handleLogout = async () => {
     try {
-      // CHANGED: Make a POST request to /logout with credentials included
-      await axios.post('/logout', {}, { withCredentials: true });
-      // Remove localStorage items after successful server logout
-      localStorage.removeItem("token");
-      localStorage.removeItem("refresh_token");
-      localStorage.removeItem("user");
-      // Redirect to login
-      window.location.href = "/login";
+        await axios.post('/api/logout', {}, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            withCredentials: true
+        });
+
+        // Clear all auth-related data from localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user');
+
+        // Redirect to home page or login page
+        window.location.href = '/';
     } catch (error) {
-      console.error('Logout failed:', error);
+        console.error('Logout failed:', error);
+        // Even if the API call fails, clear local storage
+        localStorage.clear();
+        window.location.href = '/';
     }
-  };
+};
 
   return (
     <header className="main-header">

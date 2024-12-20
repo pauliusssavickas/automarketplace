@@ -109,4 +109,22 @@ class AuthController extends Controller
             'refresh_token' => $newRefreshToken,
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        // Clear the authentication
+        Auth::guard('web')->logout();
+        
+        // Clear the session
+        //$request->session()->invalidate();
+        //$request->session()->regenerateToken();
+
+        // Remove the JWT cookie with same parameters as when it was set
+        $cookie = cookie()->forget('jwt_token');
+
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ])->withCookie($cookie);
+    }
 }

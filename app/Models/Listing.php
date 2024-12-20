@@ -51,7 +51,7 @@ class Listing extends Model
     // Method to get primary photo
 
     public function primaryPhoto()
-{
-    return $this->hasOne(ListingPhoto::class)->where('is_primary', true)->withDefault();
-}
+    {
+        return $this->hasOne(ListingPhoto::class)->where('is_primary', true)->withDefault();
+    }
 }

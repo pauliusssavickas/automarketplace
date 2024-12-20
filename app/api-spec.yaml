@@ -1,0 +1,575 @@
+openapi: 3.0.3
+info:
+  title: Vehicle Listings API
+  version: 1.0.0
+servers:
+  - url: https://testing.psavickas.xyz
+
+tags:
+  - name: listings
+  - name: comments
+  - name: vehicle-types
+
+paths:
+  /api/vehicle-types:
+    get:
+      tags: [vehicle-types]
+      summary: List all vehicle types
+      responses:
+        '200':
+          description: A list of vehicle types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VehicleType'
+      security: []
+
+    post:
+      tags: [vehicle-types]
+      summary: Create a new vehicle type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                fields:
+                  type: array
+                  items:
+                    type: object
+              required: [name, fields]
+      responses:
+        '201':
+          description: Vehicle type created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleType'
+        '403':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      security:
+        - BearerAuth: []
+
+  /api/vehicle-types/{id}:
+    get:
+      tags: [vehicle-types]
+      summary: Get a single vehicle type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Vehicle type details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleType'
+        '404':
+          description: Not found
+      security: []
+
+    put:
+      tags: [vehicle-types]
+      summary: Update a vehicle type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                fields:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Vehicle type updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleType'
+        '403':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '422':
+          description: Validation error
+        '500':
+          description: Server error
+      security:
+        - BearerAuth: []
+
+    delete:
+      tags: [vehicle-types]
+      summary: Delete a vehicle type
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Vehicle type deleted
+        '403':
+          description: Unauthorized
+        '400':
+          description: Cannot delete due to existing listings
+        '404':
+          description: Not found
+        '500':
+          description: Server error
+      security:
+        - BearerAuth: []
+
+  /api/vehicle-types/{vehicle_type_id}/listings:
+    get:
+      tags: [listings]
+      summary: List all listings for a vehicle type
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of listings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Listing'
+        '404':
+          description: Vehicle type not found
+      security: []
+
+    post:
+      tags: [listings]
+      summary: Create a new listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                price:
+                  type: number
+                contact_number:
+                  type: string
+                description:
+                  type: string
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required: [data]
+      responses:
+        '201':
+          description: Listing created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '422':
+          description: Validation error
+        '404':
+          description: Vehicle type not found
+      security:
+        - BearerAuth: []
+
+  /api/vehicle-types/{vehicle_type_id}/listings/{listing_id}:
+    get:
+      tags: [listings]
+      summary: Get a single listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Listing details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '404':
+          description: Not found
+      security: []
+
+    put:
+      tags: [listings]
+      summary: Update a listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: object
+                price:
+                  type: number
+                contact_number:
+                  type: string
+                description:
+                  type: string
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required: [data]
+      responses:
+        '200':
+          description: Listing updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '403':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '422':
+          description: Validation error
+      security:
+        - BearerAuth: []
+
+    delete:
+      tags: [listings]
+      summary: Delete a listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Listing deleted
+        '403':
+          description: Unauthorized
+        '404':
+          description: Not found
+      security:
+        - BearerAuth: []
+
+  /api/vehicle-types/{vehicle_type_id}/listings/{listing_id}/comments:
+    get:
+      tags: [comments]
+      summary: List comments for a listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '404':
+          description: Listing or vehicle type not found
+      security: []
+
+    post:
+      tags: [comments]
+      summary: Add a comment to a listing
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required: [content]
+      responses:
+        '201':
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '401':
+          description: Unauthorized (user not authenticated)
+        '422':
+          description: Validation error
+        '404':
+          description: Listing or vehicle type not found
+      security:
+        - BearerAuth: []
+
+  /api/vehicle-types/{vehicle_type_id}/listings/{listing_id}/comments/{comment_id}:
+    get:
+      tags: [comments]
+      summary: Get a single comment
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '404':
+          description: Not found
+      security: []
+
+    put:
+      tags: [comments]
+      summary: Update a comment
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required: [content]
+      responses:
+        '200':
+          description: Comment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+        '403':
+          description: Unauthorized
+        '404':
+          description: Not found
+        '422':
+          description: Validation error
+      security:
+        - BearerAuth: []
+
+    delete:
+      tags: [comments]
+      summary: Delete a comment
+      parameters:
+        - name: vehicle_type_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: listing_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: comment_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Comment deleted
+        '403':
+          description: Unauthorized
+        '404':
+          description: Not found
+      security:
+        - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    VehicleType:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        fields:
+          type: array
+          items:
+            type: object
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: integer
+        vehicle_type_id:
+          type: integer
+        user_id:
+          type: integer
+        data:
+          type: object
+        price:
+          type: number
+        contact_number:
+          type: string
+        description:
+          type: string
+        photos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ListingPhoto'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ListingPhoto:
+      type: object
+      properties:
+        id:
+          type: integer
+        listing_id:
+          type: integer
+        photo_path:
+          type: string
+        is_primary:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        listing_id:
+          type: integer
+        user_id:
+          type: integer
+        content:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time

@@ -1,4 +1,3 @@
-// resources/js/Pages/Home.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "@inertiajs/react";
 import Header from "./Header";
@@ -33,15 +32,21 @@ const Home = () => {
         if (token) {
             fetch("/api/user", {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
+                credentials: 'include'
             })
-                .then((res) => res.json())
+                .then((res) => {
+                    if (!res.ok) throw new Error('Unauthorized');
+                    return res.json();
+                })
                 .then((data) => {
                     setUser(data);
                     setLoading(false);
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.error('Error fetching user:', error);
                     localStorage.removeItem("token");
                     setToken(null);
                     setLoading(false);
@@ -52,11 +57,13 @@ const Home = () => {
     }, [token]);
 
     const handleLogout = () => {
-        fetch("/logout", {
+        fetch("/api/logout", {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${token}`,
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
+            credentials: 'include'
         }).then(() => {
             localStorage.removeItem("token");
             setToken(null);

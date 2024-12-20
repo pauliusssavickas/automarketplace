@@ -17,8 +17,8 @@ function Footer() {
           <h3>Quick Links</h3>
           <ul className="footer-links">
             <li><a href="/listings">Listings</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact</a></li>
+            <li><a href="/notfound">About Us</a></li>
+            <li><a href="/notfound">Contact</a></li>
             {/* Add more links as needed */}
           </ul>
         </div>

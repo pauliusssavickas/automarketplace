@@ -13,7 +13,11 @@ class CommentController extends Controller
         $listing = Listing::where('vehicle_type_id', $vehicle_type_id)
             ->findOrFail($listing_id);
 
-        $comments = $listing->comments()->with('user')->get();
+            $comments = $listing->comments()
+            ->with(['user' => function($query) {
+                $query->select('id', 'name');
+            }])
+            ->get();
 
         return response()->json($comments, 200);
     }

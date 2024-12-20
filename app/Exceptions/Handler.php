@@ -20,7 +20,6 @@ class Handler extends ExceptionHandler
     {
         // Check if the request expects a JSON response (for API routes)
         if ($request->expectsJson()) {
-            
             // Handle ModelNotFoundException (e.g., for models like VehicleType)
             if ($exception instanceof ModelNotFoundException) {
                 return response()->json([
@@ -41,7 +40,12 @@ class Handler extends ExceptionHandler
             ], $exception->getCode() ?: 500);
         }
 
-        // Use the default behavior for non-API requests (like HTML responses)
+        // Handle NotFoundHttpException for web requests
+        if ($exception instanceof NotFoundHttpException) {
+            return inertia('NotFound')->toResponse($request);
+        }
+
+        // Default behavior for non-API requests
         return parent::render($request, $exception);
     }
 }

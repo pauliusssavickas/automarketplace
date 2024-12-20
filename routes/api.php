@@ -5,33 +5,45 @@ use App\Http\Controllers\VehicleTypeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
-// Public access routes (no middleware)
-Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
-Route::get('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'show']); // Add this line
-Route::get('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'index']);
-Route::get('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'show']);
-Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'index']);
+// Disable CSRF for API routes
+Route::group(['middleware' => ['api']], function () {
+    // Public access routes
+    Route::get('vehicle-types', [VehicleTypeController::class, 'index']);
+    Route::get('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'show']);
+    Route::get('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'index']);
+    Route::get('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'show']);
+    Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'index']);
+    Route::get('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'show']);
 
-// Authentication routes
-Route::post('/auth/login', [AuthController::class, 'login']);
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/refresh', [AuthController::class, 'refreshToken']);
+    // Authentication routes
+    Route::post('/login', action: [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/refresh', [AuthController::class, 'refreshToken']);
 
-// Protected routes for authenticated users
-Route::middleware(['jwt:user,admin'])->group(function () {
-    // Listings
-    Route::post('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'store']);
-    Route::put('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'update']);
-    Route::delete('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'destroy']);
+    // Protected routes
+    Route::middleware(['jwt:user,admin'])->group(function () {
+        // User profile
+        Route::get('/user', [UserController::class, 'profile']);
+        
+        // Listings
+        Route::post('vehicle-types/{vehicle_type}/listings', [ListingController::class, 'store']);
+        Route::put('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'update']);
+        Route::delete('vehicle-types/{vehicle_type}/listings/{listing}', [ListingController::class, 'destroy']);
 
-    // Comments
-    Route::post('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'store']);
-    Route::put('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'update']);
-    Route::delete('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'destroy']);
-});
+        // Comments
+        Route::post('vehicle-types/{vehicle_type}/listings/{listing}/comments', [CommentController::class, 'store']);
+        Route::put('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'update']);
+        Route::delete('vehicle-types/{vehicle_type}/listings/{listing}/comments/{comment}', [CommentController::class, 'destroy']);
+    });
 
-// Admin-only routes
-Route::middleware(['jwt:admin'])->group(function () {
-    Route::apiResource('vehicle-types', VehicleTypeController::class)->except(['index', 'show']);
+    // Admin routes
+    Route::middleware(['jwt:admin'])->group(function () {
+        Route::post('vehicle-types', [VehicleTypeController::class, 'store']);
+        Route::put('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'update']);
+        Route::patch('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'update']);
+        Route::delete('vehicle-types/{vehicle_type}', [VehicleTypeController::class, 'destroy']);
+    });
 });
